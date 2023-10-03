@@ -21,16 +21,13 @@ public class App {
         HttpResponse<String> response = client.send(request, BodyHandlers.ofString());
 
         String data = response.body();
-        System.out.println(data);
 
         String[] dataJSON = data.split("\"results\":[|],\"total_pages\"");
 
-        System.out.println("\n\n==========================\n\n");
-
         String[] dataFilmes = dataJSON[0].split("},");
-        System.out.println(dataFilmes[0]);
-        System.out.println("\n\n==========================\n\n");
-        System.out.println(dataJSON[0]);
+
+        // Variavel que guarda todos os dados do filme;
+        ArrayList<String> filmesArray = new ArrayList<>();
 
         ArrayList<String> titleFilme = new ArrayList<>();
         ArrayList<String> popularityFilme = new ArrayList<>();
@@ -40,47 +37,42 @@ public class App {
         ArrayList<String> pathImgFilme = new ArrayList<>();
         ArrayList<String> imgFilme = new ArrayList<>();
 
-        System.out.println("\n\n============== Separação ============\n\n");
-
+        // loop para dividir o json, coletando o array de dados dos filmes
         for (int i = 0; i < dataFilmes.length; i++) {
             String[] atributosJSON = dataFilmes[i].split(",");
-            System.out.println("\n==========================");
-            System.out.println(dataFilmes[i]);
+
+            // loop para percorrer cada um dos dados dos filmes que estão no json
             for (int j = 0; j < atributosJSON.length; j++) {
                 atributosJSON[j] = atributosJSON[j].replaceAll("\"", "");
+                // Dividir o json para coletar os dados especificas, como nome, url, data do
+                // filme
                 if (!atributosJSON[j].contains("original_title") && atributosJSON[j].contains("title")) {
                     atributosJSON[j] = atributosJSON[j].replaceAll("title:", "");
-                    System.out.println(" Contem titulo de filme: " + atributosJSON[j]);
                     titleFilme.add(atributosJSON[j]);
                 } else if (atributosJSON[j].contains("popularity")) {
                     atributosJSON[j] = atributosJSON[j].replaceAll("popularity:", "");
-                    System.out.println(" Contem Popularidade de relevância de filme:  " + atributosJSON[j]);
-                    popularityFilme.add(atributosJSON[j]);
                 } else if (atributosJSON[j].contains("overview")) {
                     atributosJSON[j] = atributosJSON[j].replaceAll("overview:", "");
-                    System.out.println(" Contem Descrição de relevância de filme:  " + atributosJSON[j]);
-                    overviewFilme.add(atributosJSON[j]);
                 } else if (atributosJSON[j].contains("vote_average")) {
                     atributosJSON[j] = atributosJSON[j].replaceAll("vote_average:", "");
-                    System.out.println(" Contem voto de relevância de filme:  " + atributosJSON[j]);
                     averageFilme.add(atributosJSON[j]);
                 } else if (atributosJSON[j].contains("release_date")) {
                     atributosJSON[j] = atributosJSON[j].replaceAll("release_date:", "");
-                    System.out.println(" Contem Data de relevância de filme:  " + atributosJSON[j]);
                     dateReleaseFilme.add(atributosJSON[j]);
                 } else if (atributosJSON[j].contains("backdrop_path")) {
                     atributosJSON[j] = atributosJSON[j].replaceAll("backdrop_path:", "");
-                    System.out.println(" Contem o link da imagem do filme:  " + "https://api.themoviedb.org/3/movie"
-                            + atributosJSON[j] + "/images?api_key=" + apiKey);
                     imgFilme.add(atributosJSON[j]);
                     pathImgFilme.add(
                             "https://api.themoviedb.org/3/movie" + atributosJSON[j] + "/images?api_key=" + apiKey);
                 }
             }
-            System.out.println("==========================");
+            Filmes filmes = new Filmes(titleFilme.get(i), pathImgFilme.get(i), averageFilme.get(i),
+                    dateReleaseFilme.get(i));
+            filmesArray.add(i, filmes.getData());
         }
 
-        System.out.println("\n\nDados dos titulos de filmes: \n" + titleFilme);
-
+        for (int i = 0; i < filmesArray.size(); i++) {
+            System.out.println("\nDados do "+(i+1)+"° filme: \n" + filmesArray.get(i));
+        }
     }
 }

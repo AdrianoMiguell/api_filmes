@@ -1,3 +1,4 @@
-src/KeyApi.java
-bin/KeyApi.class
-
+# src/KeyApi.java
+/src/KeyApi.java
+/bin/KeyApi.class
+.gitattributes
