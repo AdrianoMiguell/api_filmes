@@ -1,9 +1,12 @@
+import com.aspose.html.HTMLDocument;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.util.ArrayList;
+
+
 
 public class App {
     public static void main(String[] args) throws Exception {
@@ -37,6 +40,8 @@ public class App {
         ArrayList<String> pathImgFilme = new ArrayList<>();
         ArrayList<String> imgFilme = new ArrayList<>();
 
+        HTMLGenerate htmlGenerate = new HTMLGenerate();
+
         // loop para dividir o json, coletando o array de dados dos filmes
         for (int i = 0; i < dataFilmes.length; i++) {
             String[] atributosJSON = dataFilmes[i].split(",");
@@ -66,13 +71,29 @@ public class App {
                             "https://api.themoviedb.org/3/movie" + atributosJSON[j] + "/images?api_key=" + apiKey);
                 }
             }
+
             Filmes filmes = new Filmes(titleFilme.get(i), pathImgFilme.get(i), averageFilme.get(i),
                     dateReleaseFilme.get(i));
+            
+                    
             filmesArray.add(i, filmes.getData());
+
+            htmlGenerator.getFilmesData(titleFilme.get(i), pathImgFilme.get(i), averageFilme.get(i),
+                    dateReleaseFilme.get(i));
         }
 
+        // HTMLGenerate htmlGenerate = new HTMLGenerate();
+        
         for (int i = 0; i < filmesArray.size(); i++) {
             System.out.println("\nDados do "+(i+1)+"° filme: \n" + filmesArray.get(i));
+            
         }
+
+        String textHtml = html.constructData();
+        
+        HTMLDocument document = new HTMLDocument();
+        document.save("./page/index.html");
+
     }
+
 }
